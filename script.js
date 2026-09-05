@@ -3,7 +3,7 @@ const context = canvas.getContext("2d");
 let w, h;
 function BoxSize(){
   const width=700;
-  const height=500;
+  const height=window.innerHeight;
   canvas.width=width;
   canvas.height=height;
   context.fillStyle="white";
