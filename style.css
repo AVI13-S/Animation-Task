@@ -2,3 +2,30 @@
   margin: 0;
   padding: 0;
 }
+html,body{
+  background-color: black;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+html{
+  background: radial-gradient(
+    circle at 50% 60%, rgb(36, 36, 39) 20%,
+    rgb(25, 25, 26) 40%,
+    rgb(6, 6, 8) 85%
+  );
+  .container{
+    position: relative;
+    width: 90vh;
+    height: 90vh;
+    border-color: whitesmoke;
+  }
+  #Canvas{
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+}
