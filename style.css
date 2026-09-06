@@ -17,7 +17,7 @@ html,body{
   height: 100vh;
   width: 100vw;
   z-index: 1;
-  cursor: cell;
+  cursor: crosshair;
 }
 .controls{
   position: absolute;
@@ -27,6 +27,11 @@ html,body{
   display: flex;
   flex-direction: column;
   gap: 5px;
+  background: rgba(10, 8, 20, 0.6);
+  padding: 10px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(230, 197, 148, 0.2);
 }
 .Button{
   width: 40px;
