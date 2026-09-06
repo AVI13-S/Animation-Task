@@ -1,7 +1,7 @@
-const fullScreen = document.getElementById("fullScreen");
-const bgContext = fullScreen.getContext("2d");
-let w = fullScreen.width = window.innerWidth;
-let h = fullScreen.height = window.innerHeight;
+const fullScreen=document.getElementById("fullScreen");
+const bgContext=fullScreen.getContext("2d");
+let w=fullScreen.width=window.innerWidth;
+let h=fullScreen.height=window.innerHeight;
 let isPlaying = true;
 let speed = 1;
 let mouse = { x: w / 2, y: h / 2 };
@@ -17,6 +17,13 @@ const sun={
   radius:100,
   pulse:0
 };
+const planets = [
+  { name: "Mercury", orbitRadiusX: 110, orbitRadiusY: 60, speed: 0.015, size: 4, color: "#a6a6a6", angle: 0 },
+  { name: "Earth",   orbitRadiusX: 180, orbitRadiusY: 95, speed: 0.008, size: 7, color: "#4d94ff", angle: 2 },
+  { name: "Mars",    orbitRadiusX: 250, orbitRadiusY: 130, speed: 0.006, size: 5, color: "#ff5233", angle: 4 },
+  { name: "Jupiter", orbitRadiusX: 340, orbitRadiusY: 180, speed: 0.003, size: 13, color: "#e0a96d", angle: 1 },
+  { name: "Saturn",  orbitRadiusX: 440, orbitRadiusY: 230, speed: 0.002, size: 10, color: "#f4d06f", angle: 3, hasRings: true }
+];
 let stars=[];
 for (let i=0;i<200;i++) {
   stars.push({ 
@@ -34,7 +41,7 @@ function createGalaxyStars() {
   const cy = h * 0.52;
   const maxR = Math.max(w, h) * 0.55;
   for (let i = 0; i < 3000; i++) {
-    const dist = Math.pow(Math.random(), 1.8) * maxR;
+    const dist = Math.pow(Math.random(), 1.8) * (maxR-75);
     const arm = Math.floor(Math.random() * 2) * Math.PI;
     const twist = (dist / maxR) * (Math.PI * 4.2);
     const spread = (Math.random() - 0.5) * (0.2 + (dist / maxR) * 0.6);
@@ -114,19 +121,32 @@ speedSlider.oninput = function() {
   }
   const gCx = w * 0.45;
   const gCy = h * 0.52;
-  const coreGlow = bgContext.createRadialGradient(gCx, gCy, 0, gCx, gCy, 280);
-  coreGlow.addColorStop(0, 'rgba(255, 248, 225, 0.95)');
-  coreGlow.addColorStop(0.25, 'rgba(255, 195, 120, 0.5)');
-  coreGlow.addColorStop(0.65, 'rgba(80, 110, 200, 0.15)');
-  coreGlow.addColorStop(1, 'transparent');
+ 
+  for (let p of planets) {
+    bgContext.beginPath();
+    bgContext.ellipse(gCx, gCy, p.orbitRadiusX, p.orbitRadiusY, 0, 0, Math.PI * 2);
+    bgContext.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    bgContext.lineWidth = 1;
+    bgContext.stroke();
+  }
+   const coreGlow = bgContext.createRadialGradient(gCx, gCy, 0, gCx, gCy, 280);
+   coreGlow.addColorStop(0, 'rgba(0, 0, 0, 0.95)');     
+  coreGlow.addColorStop(0.15, 'rgba(5, 5, 15, 0.7)');    
+  coreGlow.addColorStop(0.45, 'rgba(25, 15, 60, 0.2)');
+   coreGlow.addColorStop(1, 'transparent');
 
   bgContext.fillStyle = coreGlow;
   bgContext.beginPath();
   bgContext.arc(gCx, gCy, 280, 0, Math.PI * 2);
   bgContext.fill();
+bgContext.fillStyle = '#010103';
+  bgContext.beginPath();
+  bgContext.arc(gCx, gCy, 35, 0, Math.PI * 2);
+  bgContext.fill();
   for (let s of galaxyStars) {
-    if (isPlaying) s.angle += s.speed * speed;
+  if (isPlaying) s.angle += s.speed * speed;
     s.twinklePhase += s.twinkleSpeed;
+if(s.dist<70) continue;
     let sx = gCx + Math.cos(s.angle) * s.dist;
     let sy = gCy + Math.sin(s.angle) * (s.dist * 0.52);
     const dx = sx - mouse.x;
@@ -143,6 +163,29 @@ speedSlider.oninput = function() {
     bgContext.fillStyle = `hsla(${s.hue}, 80%, 80%, ${alpha})`;
     bgContext.beginPath();
     bgContext.arc(sx, sy, sz, 0, Math.PI * 2);
+    bgContext.fill();
+  }
+  for (let p of planets) {
+    if (isPlaying) {
+      p.angle += p.speed * speed;
+    }
+
+    let px = gCx + Math.cos(p.angle) * p.orbitRadiusX;
+    let py = gCy + Math.sin(p.angle) * p.orbitRadiusY;
+    if (p.hasRings) {
+      bgContext.beginPath();
+      bgContext.ellipse(px, py, p.size * 2.2, p.size * 0.8, Math.PI / 6, 0, Math.PI * 2);
+      bgContext.strokeStyle = 'rgba(212, 175, 55, 0.5)';
+      bgContext.lineWidth = 3;
+      bgContext.stroke();
+    }
+    bgContext.beginPath();
+    bgContext.arc(px, py, p.size, 0, Math.PI * 2);
+    bgContext.fillStyle = p.color;
+    bgContext.fill();
+    bgContext.beginPath();
+    bgContext.arc(px - p.size * 0.3, py - p.size * 0.3, p.size * 0.3, 0, Math.PI * 2);
+    bgContext.fillStyle = 'rgba(255, 255, 255, 0.4)';
     bgContext.fill();
   }
   if (isPlaying) {
